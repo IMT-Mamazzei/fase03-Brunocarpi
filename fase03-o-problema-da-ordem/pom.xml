@@ -50,9 +50,10 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <outputDirectory>${project.build.directory}/generated-sources/cup</outputDirectory>
-                </configuration>
+                  <configuration>
+                      <cupDefinition>src/main/cup/Parser.cup</cupDefinition>
+                      <outputDirectory>${project.build.directory}/generated-sources/cup</outputDirectory>
+                  </configuration>
             </plugin>
 
 
