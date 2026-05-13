@@ -5,13 +5,17 @@ import java_cup.runtime.*;
 parser code {:
     // Método chamado pelo CUP quando encontra um erro sintático
     public void syntax_error(Symbol cur_token) {
-        throw new RuntimeException("Erro Sintático na linha " + cur_token.left + ", coluna " + cur_token.right);
+        throw new RuntimeException(
+            "Erro Sintático na linha " +
+            cur_token.left +
+            ", coluna " +
+            cur_token.right
+        );
     }
 :}
 
 /* ========================================================================= */
 /* DECLARAÇÃO DOS TOKENS (TERMINAIS)                                         */
-/* O CUP usará isso para gerar o sym.java que o seu Lexer precisa            */
 /* ========================================================================= */
 
 terminal IF, THEN, ELSE, WHILE;
@@ -20,20 +24,14 @@ terminal String ID, NUMBER;
 terminal String ADD_OP, MUL_OP, REL_OP;
 
 /* ========================================================================= */
-/* DECLARAÇÃO DOS NÃO-TERMINAIS (VARIÁVEIS DA GRAMÁTICA)                     */
+/* DECLARAÇÃO DOS NÃO-TERMINAIS                                              */
 /* ========================================================================= */
 
 non terminal program, stmt_list, stmt;
 non terminal assign_stmt, if_stmt, while_stmt, block_stmt, null_stmt;
+
+/* Não-terminais das expressões */
 non terminal expr, rel_expr, add_expr, mul_expr, factor;
-
-/* ========================================================================= */
-/* PRECEDÊNCIA E ASSOCIATIVIDADE                                             */
-/* ========================================================================= */
-
-/* TODO 1: Declare a precedência para resolver a ambiguidade matemática. */
-/* Dica: O operador mais embaixo tem a MAIOR precedência!                */
-/* precedence left ... ; */
 
 /* ========================================================================= */
 /* REGRAS DA GRAMÁTICA                                                       */
@@ -41,15 +39,24 @@ non terminal expr, rel_expr, add_expr, mul_expr, factor;
 
 start with program;
 
-/* Programa = lista de comandos */
+/* ========================================================================= */
+/* PROGRAMA                                                                  */
+/* ========================================================================= */
+
 program ::= stmt_list ;
 
-/* Lista recursiva de comandos */
+/* ========================================================================= */
+/* LISTA DE COMANDOS                                                         */
+/* ========================================================================= */
+
 stmt_list ::= stmt_list stmt
             | stmt
             ;
 
-/* Tipos de comandos */
+/* ========================================================================= */
+/* COMANDOS                                                                  */
+/* ========================================================================= */
+
 stmt ::= assign_stmt
        | if_stmt
        | while_stmt
@@ -57,39 +64,61 @@ stmt ::= assign_stmt
        | null_stmt
        ;
 
-/* Atribuição */
+/* ========================================================================= */
+/* ATRIBUIÇÃO                                                                */
+/* ========================================================================= */
+
 assign_stmt ::= ID ASSIGN expr SEMI ;
 
-/* IF */
+/* ========================================================================= */
+/* IF                                                                         */
+/* ========================================================================= */
+
 if_stmt ::= IF LPAREN expr RPAREN THEN block_stmt
           | IF LPAREN expr RPAREN THEN block_stmt ELSE block_stmt
           ;
 
-/* WHILE */
+/* ========================================================================= */
+/* WHILE                                                                     */
+/* ========================================================================= */
+
 while_stmt ::= WHILE LPAREN expr RPAREN block_stmt ;
 
-/* BLOCO */
+/* ========================================================================= */
+/* BLOCO                                                                     */
+/* ========================================================================= */
+
 block_stmt ::= LBRACE stmt_list RBRACE ;
 
-/* COMANDO NULO */
+/* ========================================================================= */
+/* COMANDO NULO                                                              */
+/* ========================================================================= */
+
 null_stmt ::= SEMI ;
 
-/* EXPRESSÕES */
+/* ========================================================================= */
+/* EXPRESSÕES                                                                */
+/* ========================================================================= */
 
+/* Nível mais alto */
 expr ::= rel_expr ;
 
+/* Operadores relacionais */
 rel_expr ::= rel_expr REL_OP add_expr
            | add_expr
            ;
 
+/* Soma e subtração */
 add_expr ::= add_expr ADD_OP mul_expr
            | mul_expr
            ;
 
+/* Multiplicação, divisão e módulo */
 mul_expr ::= mul_expr MUL_OP factor
            | factor
            ;
 
+/* Elementos básicos */
 factor ::= LPAREN expr RPAREN
          | NUMBER
          | ID
