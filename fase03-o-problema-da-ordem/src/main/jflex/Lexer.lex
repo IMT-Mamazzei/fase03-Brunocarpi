@@ -17,36 +17,29 @@ package br.maua.cic303;
 %}
 
 /* ========================================================================= */
-/* MACROS (Expressões Regulares Auxiliares)                                  */
+/* MACROS                                                                    */
 /* ========================================================================= */
+
 LineTerminator = \r|\n|\r\n
 WhiteSpace     = {LineTerminator} | [ \t\f]
 
-/* TODO 1: Crie a macro para Número (Notação de Engenharia) */
-/* Dica: Deve aceitar 7, 3.14, 6.02E23, 6.62e-34 */
+/* Número */
 Number = [0-9]+(\.[0-9]+)?([Ee][+-]?[0-9]+)?
 
+/* Identificadores */
 Letter = [a-zA-Z]
 Digit  = [0-9]
 Identifier = {Letter}({Letter}|{Digit}|_){0,31}
 
 %%
 
-/* TODO 2: Crie a macro para Identificador */
-/* Dica: Letras, seguidas de letras, números ou _. MÁXIMO de 32 caracteres! */
-/* Se a macro de max 32 for difícil, use {Letter}({Letter}|{Digit}|_)* e trate o tamanho na regra! */
-Letter = [a-zA-Z]
-Digit  = [0-9]
-Identifier = {Letter}({Letter}|{Digit}|_){0,31}
-
-%%
 /* ========================================================================= */
 /* REGRAS LÉXICAS                                                            */
 /* ========================================================================= */
 
 <YYINITIAL> {
-    
-   /* Espaços */
+
+    /* ===================== ESPAÇOS ===================== */
     {WhiteSpace}    { /* ignora */ }
 
     /* ===================== PALAVRAS RESERVADAS ===================== */
@@ -82,12 +75,23 @@ Identifier = {Letter}({Letter}|{Digit}|_){0,31}
     {Number}        { return token(Tag.NUMBER, yytext()); }
 
     /* ===================== ERROS ===================== */
-    {Letter}({Letter}|{Digit}|_){32} { 
-        return token(Tag.ERROR, "Erro Léxico: Identificador ultrapassou 32 caracteres -> " + yytext()); 
+    {Letter}({Letter}|{Digit}|_){32} {
+        return token(
+            Tag.ERROR,
+            "Erro Léxico: Identificador ultrapassou 32 caracteres -> " + yytext()
+        );
     }
 
-    .               { return token(Tag.ERROR, "Erro Léxico: Caractere Ilegal -> " + yytext()); }
+    . {
+        return token(
+            Tag.ERROR,
+            "Erro Léxico: Caractere Ilegal -> " + yytext()
+        );
+    }
 }
 
-/* Regra para o Final do Arquivo */
-<<EOF>>             { return token(Tag.EOF, ""); }
+/* ========================================================================= */
+/* EOF                                                                       */
+/* ========================================================================= */
+
+<<EOF>> { return token(Tag.EOF, ""); }
