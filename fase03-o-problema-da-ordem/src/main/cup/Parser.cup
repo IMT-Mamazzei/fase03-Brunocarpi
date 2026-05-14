@@ -15,7 +15,7 @@ parser code {:
 :}
 
 /* ========================================================================= */
-/* DECLARAÇÃO DOS TOKENS (TERMINAIS)                                         */
+/* TERMINAIS                                                                 */
 /* ========================================================================= */
 
 terminal IF, THEN, ELSE, WHILE;
@@ -24,17 +24,16 @@ terminal String ID, NUMBER;
 terminal String ADD_OP, MUL_OP, REL_OP;
 
 /* ========================================================================= */
-/* DECLARAÇÃO DOS NÃO-TERMINAIS                                              */
+/* NÃO TERMINAIS                                                             */
 /* ========================================================================= */
 
 non terminal program, stmt_list, stmt;
 non terminal assign_stmt, if_stmt, while_stmt, block_stmt, null_stmt;
 
-/* Não-terminais das expressões */
 non terminal expr, rel_expr, add_expr, mul_expr, factor;
 
 /* ========================================================================= */
-/* REGRAS DA GRAMÁTICA                                                       */
+/* GRAMÁTICA                                                                 */
 /* ========================================================================= */
 
 start with program;
@@ -71,7 +70,7 @@ stmt ::= assign_stmt
 assign_stmt ::= ID ASSIGN expr SEMI ;
 
 /* ========================================================================= */
-/* IF                                                                         */
+/* IF                                                                        */
 /* ========================================================================= */
 
 if_stmt ::= IF LPAREN expr RPAREN THEN block_stmt
@@ -100,25 +99,20 @@ null_stmt ::= SEMI ;
 /* EXPRESSÕES                                                                */
 /* ========================================================================= */
 
-/* Nível mais alto */
 expr ::= rel_expr ;
 
-/* Operadores relacionais */
 rel_expr ::= rel_expr REL_OP add_expr
            | add_expr
            ;
 
-/* Soma e subtração */
 add_expr ::= add_expr ADD_OP mul_expr
            | mul_expr
            ;
 
-/* Multiplicação, divisão e módulo */
 mul_expr ::= mul_expr MUL_OP factor
            | factor
            ;
 
-/* Elementos básicos */
 factor ::= LPAREN expr RPAREN
          | NUMBER
          | ID
